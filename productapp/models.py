@@ -36,7 +36,7 @@ class TypeImage(ImageBaseModel):
 
 class Category(TimeBaseModel):
     type = models.ForeignKey(Type, on_delete=models.CASCADE)
-    name = models.CharField(max_length=50, unique=True)
+    name = models.CharField(max_length=50)
     slug = AutoSlugField(populate_from='name', unique=True)
     description = models.TextField(blank=True, null=True)
 
@@ -47,6 +47,7 @@ class Category(TimeBaseModel):
         verbose_name = 'Category'
         verbose_name_plural = 'Categories'
         ordering = ['type', 'name']
+        unique_together = ('type', 'name')
 
 
 class CategoryImage(ImageBaseModel):
@@ -128,7 +129,7 @@ class Banner(TimeBaseModel):
         if self.is_default:
             default_banner = Banner.objects.filter(is_default=True)
             if default_banner.exists():
-                raise ValidationError('Ya existe un banner por defecto')
+                raise ValidationError('Default banner already exists')
 
         if self.can_redirect:
             if (not self.type_redirect) or (not self.category_redirect) or (not self.product_redirect):

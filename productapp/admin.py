@@ -172,4 +172,3 @@ admin.site.register(CategoryImage, CategoryImageAdmin)
 admin.site.register(Product, ProductAdmin)
 admin.site.register(ProductImage, ProductImageAdmin)
 admin.site.register(ProductDetail, ProductDetailAdmin)
-

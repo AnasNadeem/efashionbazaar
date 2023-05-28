@@ -19,14 +19,14 @@ class TimeBaseModelAdmin(admin.ModelAdmin):
 
 
 class BannerAdmin(TimeBaseModelAdmin):
-    list_display = ('id', 'name', 'is_active', 'is_default',) + TimeBaseModelAdmin.list_display
+    list_display = ('id', 'name', 'can_redirect', 'is_active', 'is_default',) + TimeBaseModelAdmin.list_display
     list_display_links = ('id', 'name')
     list_editable = ('is_default',) + TimeBaseModelAdmin.list_editable
     list_filter = ('is_default',) + TimeBaseModelAdmin.list_filter
     search_fields = ('name', 'description')
     fieldsets = (
         ('Banner', {
-            'fields': ('name', 'description', 'image', 'is_active', 'is_default')
+            'fields': ('name', 'description', 'image', 'is_active', 'is_default', 'can_redirect', 'type_redirect', 'category_redirect', 'product_redirect')
         }),
         ('Time', {
             'fields': ('created', 'updated')
@@ -41,12 +41,13 @@ class TypeImageInline(admin.TabularInline):
 
 
 class TypeAdmin(TimeBaseModelAdmin):
-    list_display = ('id', 'name', 'description',) + TimeBaseModelAdmin.list_display
+    list_display = ('id', 'name', 'slug', 'description',) + TimeBaseModelAdmin.list_display
     list_display_links = ('id', 'name')
+    readonly_fields = ('slug',) + TimeBaseModelAdmin.readonly_fields
     search_fields = ('name', 'description')
     fieldsets = (
         ('Type', {
-            'fields': ('name', 'description', 'is_active')
+            'fields': ('name', 'slug', 'description', 'is_active')
         }),
         ('Time', {
             'fields': ('created', 'updated')
@@ -77,13 +78,14 @@ class CategoryImageInline(admin.TabularInline):
 
 
 class CategoryAdmin(TimeBaseModelAdmin):
-    list_display = ('id', 'type', 'name', 'description',) + TimeBaseModelAdmin.list_display
+    list_display = ('id', 'type', 'name', 'slug', 'description',) + TimeBaseModelAdmin.list_display
     list_display_links = ('id', 'name')
+    readonly_fields = ('slug',) + TimeBaseModelAdmin.readonly_fields
     list_filter = ('type',) + TimeBaseModelAdmin.list_filter
     search_fields = ('type__name', 'name', 'description')
     fieldsets = (
         ('Category', {
-            'fields': ('type', 'name', 'description', 'is_active')
+            'fields': ('type', 'name', 'slug', 'description', 'is_active')
         }),
         ('Time', {
             'fields': ('created', 'updated')
@@ -119,13 +121,14 @@ class ProductDetailInline(admin.TabularInline):
 
 
 class ProductAdmin(TimeBaseModelAdmin):
-    list_display = ('id', 'category', 'name', 'description', 'price',) + TimeBaseModelAdmin.list_display
+    list_display = ('id', 'category', 'name', 'slug', 'description', 'price',) + TimeBaseModelAdmin.list_display
     list_display_links = ('id', 'name')
+    readonly_fields = ('slug',) + TimeBaseModelAdmin.readonly_fields
     list_filter = ('category',) + TimeBaseModelAdmin.list_filter
     search_fields = ('category__name', 'name', 'description', 'price')
     fieldsets = (
         ('Product', {
-            'fields': ('category', 'name', 'description', 'price', 'is_active')
+            'fields': ('category', 'name', 'slug', 'description', 'price', 'is_active')
         }),
         ('Time', {
             'fields': ('created', 'updated')

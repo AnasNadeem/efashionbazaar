@@ -35,5 +35,10 @@ class ImageBaseModel(TimeBaseModel):
         if self.image.name.split('.')[-1] != 'png':
             raise ValidationError('Image must be PNG')
 
+        if self.is_default:
+            default_image = self.__class__.objects.filter(is_default=True)
+            if default_image.exists():
+                raise ValidationError('Default image already exists')
+
     class Meta:
         abstract = True

@@ -5,6 +5,35 @@ from autoslug import AutoSlugField
 from utils.models_base import (TimeBaseModel, ImageBaseModel)
 
 
+class Attribute(TimeBaseModel):
+    """ For example: Size, Color, etc """
+    name = models.CharField(max_length=150, unique=True)
+    description = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'Attribute'
+        verbose_name_plural = 'Attributes'
+        ordering = ['name']
+
+
+class AttributeValue(TimeBaseModel):
+    """ For example: Size: 10, Color: Red, etc """
+    attribute = models.ForeignKey(Attribute, on_delete=models.CASCADE)
+    value = models.CharField(max_length=150)
+
+    def __str__(self):
+        return self.attribute.name + ' - ' + self.value
+
+    class Meta:
+        verbose_name = 'Attribute Value'
+        verbose_name_plural = 'Attribute Values'
+        ordering = ['attribute', 'value']
+        unique_together = ('attribute', 'value')
+
+
 class Type(TimeBaseModel):
     """ For example: Men, Women, Kids etc """
     name = models.CharField(max_length=50, unique=True)
@@ -67,35 +96,6 @@ class CategoryImage(ImageBaseModel):
         ordering = ['category']
 
 
-class ProductAttribute(TimeBaseModel):
-    """ For example: Size, Color, etc """
-    name = models.CharField(max_length=150, unique=True)
-    description = models.TextField(blank=True, null=True)
-
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        verbose_name = 'Product Attribute'
-        verbose_name_plural = 'Product Attributes'
-        ordering = ['name']
-
-
-class ProductAttributeValue(TimeBaseModel):
-    """ For example: Size: 10, Color: Red, etc """
-    product_attribute = models.ForeignKey(ProductAttribute, on_delete=models.CASCADE)
-    value = models.CharField(max_length=150)
-
-    def __str__(self):
-        return self.product_attribute.name + ' - ' + self.name
-
-    class Meta:
-        verbose_name = 'Product Attribute Value'
-        verbose_name_plural = 'Product Attribute Values'
-        ordering = ['product_attribute', 'value']
-        unique_together = ('product_attribute', 'value')
-
-
 class Product(TimeBaseModel):
     """ For example: Kurta: Linen Kurta, Cotton Kurta, etc"""
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
@@ -106,7 +106,7 @@ class Product(TimeBaseModel):
     description = models.TextField(blank=True, null=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     out_of_stock = models.BooleanField(default=False)
-    # prod_attr_value = models.ManyToManyField(ProductAttributeValue, blank=True)
+    # attr_value = models.ManyToManyField(AttributeValue, blank=True)
 
     @property
     def generate_sku(self):

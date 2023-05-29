@@ -7,8 +7,8 @@ from productapp.models import (
     CategoryImage,
     Product,
     ProductImage,
-    ProductAttribute,
-    ProductAttributeValue,
+    Attribute,
+    AttributeValue,
     ProductDetail,
 )
 
@@ -18,6 +18,40 @@ class TimeBaseModelAdmin(admin.ModelAdmin):
     list_filter = ('is_active', 'created', 'updated')
     readonly_fields = ('created', 'updated')
     list_editable = ('is_active',)
+
+
+class AttributeValueInline(admin.TabularInline):
+    model = AttributeValue
+    extra = 1
+
+
+class AttributeAdmin(TimeBaseModelAdmin):
+    list_display = ('id', 'name', 'description',) + TimeBaseModelAdmin.list_display
+    list_display_links = ('id', 'name')
+    search_fields = ('name', 'description')
+    fieldsets = (
+        ('Product Attribute', {
+            'fields': ('name', 'description', 'is_active')
+        }),
+        ('Time', {
+            'fields': ('created', 'updated')
+        }),
+    )
+    inlines = (AttributeValueInline,)
+
+
+class AttributeValueAdmin(TimeBaseModelAdmin):
+    list_display = ('id', 'attribute', 'value',) + TimeBaseModelAdmin.list_display
+    list_display_links = ('id', 'value')
+    search_fields = ('product_attribute__name', 'value',)
+    fieldsets = (
+        ('Product Attribute Value', {
+            'fields': ('attribute', 'value', 'is_active')
+        }),
+        ('Time', {
+            'fields': ('created', 'updated')
+        }),
+    )
 
 
 class BannerAdmin(TimeBaseModelAdmin):
@@ -155,40 +189,6 @@ class ProductImageAdmin(TimeBaseModelAdmin):
     )
 
 
-class ProductAttributeValueInline(admin.TabularInline):
-    model = ProductAttributeValue
-    extra = 1
-
-
-class ProductAttributeAdmin(TimeBaseModelAdmin):
-    list_display = ('id', 'name', 'description',) + TimeBaseModelAdmin.list_display
-    list_display_links = ('id', 'name')
-    search_fields = ('name', 'description')
-    fieldsets = (
-        ('Product Attribute', {
-            'fields': ('name', 'description', 'is_active')
-        }),
-        ('Time', {
-            'fields': ('created', 'updated')
-        }),
-    )
-    inlines = (ProductAttributeValueInline,)
-
-
-class ProductAttributeValueAdmin(TimeBaseModelAdmin):
-    list_display = ('id', 'product_attribute', 'value',) + TimeBaseModelAdmin.list_display
-    list_display_links = ('id', 'value')
-    search_fields = ('product_attribute__name', 'value',)
-    fieldsets = (
-        ('Product Attribute Value', {
-            'fields': ('product_attribute', 'value', 'is_active')
-        }),
-        ('Time', {
-            'fields': ('created', 'updated')
-        }),
-    )
-
-
 class ProductDetailAdmin(TimeBaseModelAdmin):
     list_display = ('id', 'product', 'name', 'description',) + TimeBaseModelAdmin.list_display
     list_display_links = ('id', 'name')
@@ -203,13 +203,13 @@ class ProductDetailAdmin(TimeBaseModelAdmin):
     )
 
 
+admin.site.register(Attribute, AttributeAdmin)
+admin.site.register(AttributeValue, AttributeValueAdmin)
 admin.site.register(Banner, BannerAdmin)
-admin.site.register(Type, TypeAdmin)
-admin.site.register(TypeImage, TypeImageAdmin)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(CategoryImage, CategoryImageAdmin)
 admin.site.register(Product, ProductAdmin)
 admin.site.register(ProductImage, ProductImageAdmin)
-admin.site.register(ProductAttribute, ProductAttributeAdmin)
-admin.site.register(ProductAttributeValue, ProductAttributeValueAdmin)
 admin.site.register(ProductDetail, ProductDetailAdmin)
+admin.site.register(Type, TypeAdmin)
+admin.site.register(TypeImage, TypeImageAdmin)

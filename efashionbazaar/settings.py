@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django_filters',
     # Our apps
     'productapp',
+    'marketingapp',
 ]
 
 MIDDLEWARE = [

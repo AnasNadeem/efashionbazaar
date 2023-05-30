@@ -8,6 +8,7 @@ from productapp.models import (
     Product,
     ProductAttributeMap,
     ProductDetail,
+    ProductEcommercePlatform,
     ProductImage,
     Type,
     TypeImage,
@@ -164,6 +165,11 @@ class ProductAttributeMapInline(admin.TabularInline):
     fk_name = 'product'
 
 
+class ProductEcommercePlatformInline(admin.TabularInline):
+    model = ProductEcommercePlatform
+    extra = 0
+
+
 class ProductAdmin(TimeBaseModelAdmin):
     list_display = ('id', 'category', 'name', 'slug', 'price',) + TimeBaseModelAdmin.list_display
     list_display_links = ('id', 'name')
@@ -178,7 +184,7 @@ class ProductAdmin(TimeBaseModelAdmin):
             'fields': ('created', 'updated')
         }),
     )
-    inlines = (ProductImageInline, ProductDetailInline, ProductAttributeMapInline,)
+    inlines = (ProductImageInline, ProductDetailInline, ProductAttributeMapInline, ProductEcommercePlatformInline,)
 
 
 class ProductAttributeMapAdmin(TimeBaseModelAdmin):
@@ -189,6 +195,21 @@ class ProductAttributeMapAdmin(TimeBaseModelAdmin):
     fieldsets = (
         ('Product Attribute Map', {
             'fields': ('product', 'attribute', 'value', 'stock')
+        }),
+        ('Time', {
+            'fields': ('created', 'updated')
+        }),
+    )
+
+
+class ProductEcommercePlatformAdmin(TimeBaseModelAdmin):
+    list_display = ('id', 'product', 'platform',) + TimeBaseModelAdmin.list_display
+    list_display_links = ('id', 'product')
+    list_filter = ('platform',) + TimeBaseModelAdmin.list_filter
+    search_fields = ('product__name', 'platform__name', 'url')
+    fieldsets = (
+        ('Product Ecommerce Platform', {
+            'fields': ('product', 'platform', 'url', 'is_active')
         }),
         ('Time', {
             'fields': ('created', 'updated')
@@ -228,12 +249,16 @@ class ProductDetailAdmin(TimeBaseModelAdmin):
 
 admin.site.register(Attribute, AttributeAdmin)
 admin.site.register(Banner, BannerAdmin)
+# Category
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(CategoryAttributeMap, CategoryAttributeMapAdmin)
 admin.site.register(CategoryImage, CategoryImageAdmin)
+# Product
 admin.site.register(Product, ProductAdmin)
 admin.site.register(ProductAttributeMap, ProductAttributeMapAdmin)
-admin.site.register(ProductImage, ProductImageAdmin)
 admin.site.register(ProductDetail, ProductDetailAdmin)
+admin.site.register(ProductEcommercePlatform, ProductEcommercePlatformAdmin)
+admin.site.register(ProductImage, ProductImageAdmin)
+# Type
 admin.site.register(Type, TypeAdmin)
 admin.site.register(TypeImage, TypeImageAdmin)

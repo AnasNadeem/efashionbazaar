@@ -177,6 +177,26 @@ class ProductDetail(TimeBaseModel):
         unique_together = ('product', 'name')
 
 
+class ProductEcommercePlatform(TimeBaseModel):
+    """ For example: Amazon, Flipkart, etc """
+    PLATFORM = (
+        ('amazon', 'Amazon'),
+        ('flipkart', 'Flipkart')
+    )
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    platform = models.CharField(max_length=50, choices=PLATFORM)
+    url = models.URLField()
+
+    def __str__(self):
+        return self.platform + ' - ' + self.product.name
+
+    class Meta:
+        verbose_name = 'Product Ecommerce Platform'
+        verbose_name_plural = 'Product Ecommerce Platforms'
+        ordering = ['product', 'platform']
+        unique_together = ('product', 'platform')
+
+
 class Banner(TimeBaseModel):
     name = models.CharField(max_length=150)
     description = models.TextField(blank=True, null=True)

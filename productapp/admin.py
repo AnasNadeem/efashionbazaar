@@ -3,6 +3,7 @@ from productapp.models import (
     Attribute,
     Banner,
     Category,
+    CategoryAttributeMap,
     CategoryImage,
     Product,
     ProductAttributeMap,
@@ -93,6 +94,12 @@ class CategoryImageInline(admin.TabularInline):
     extra = 1
 
 
+class CategoryAttributeMapInline(admin.TabularInline):
+    model = CategoryAttributeMap
+    extra = 1
+    fk_name = 'category'
+
+
 class CategoryAdmin(TimeBaseModelAdmin):
     list_display = ('id', 'type', 'name', 'slug', 'description',) + TimeBaseModelAdmin.list_display
     list_display_links = ('id', 'name')
@@ -107,7 +114,22 @@ class CategoryAdmin(TimeBaseModelAdmin):
             'fields': ('created', 'updated')
         }),
     )
-    inlines = (CategoryImageInline, )
+    inlines = (CategoryImageInline, CategoryAttributeMapInline,)
+
+
+class CategoryAttributeMapAdmin(TimeBaseModelAdmin):
+    list_display = ('id', 'category', 'attribute', ) + TimeBaseModelAdmin.list_display
+    list_display_links = ('id', 'category')
+    list_filter = ('category', 'attribute',) + TimeBaseModelAdmin.list_filter
+    search_fields = ('category__name', 'attribute__name')
+    fieldsets = (
+        ('Category Attribute Map', {
+            'fields': ('category', 'attribute', 'value', 'is_active')
+        }),
+        ('Time', {
+            'fields': ('created', 'updated')
+        }),
+    )
 
 
 class CategoryImageAdmin(TimeBaseModelAdmin):
@@ -207,6 +229,7 @@ class ProductDetailAdmin(TimeBaseModelAdmin):
 admin.site.register(Attribute, AttributeAdmin)
 admin.site.register(Banner, BannerAdmin)
 admin.site.register(Category, CategoryAdmin)
+admin.site.register(CategoryAttributeMap, CategoryAttributeMapAdmin)
 admin.site.register(CategoryImage, CategoryImageAdmin)
 admin.site.register(Product, ProductAdmin)
 admin.site.register(ProductAttributeMap, ProductAttributeMapAdmin)

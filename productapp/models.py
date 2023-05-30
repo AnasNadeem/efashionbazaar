@@ -1,3 +1,4 @@
+from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
 from django.db import models
 
@@ -64,6 +65,22 @@ class Category(TimeBaseModel):
         verbose_name_plural = 'Categories'
         ordering = ['type', 'name']
         unique_together = ('type', 'name')
+
+
+class CategoryAttributeMap(TimeBaseModel):
+    """For ex: Kurta: Size, Color, etc. This will use in filtering"""
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    attribute = models.ForeignKey(Attribute, on_delete=models.CASCADE)
+    values = ArrayField(models.CharField(max_length=50), blank=True, null=True)
+
+    def __str__(self):
+        return self.category.name + ' - ' + self.attribute.name
+
+    class Meta:
+        verbose_name = 'Category Attribute Map'
+        verbose_name_plural = 'Category Attribute Maps'
+        ordering = ['category', 'attribute']
+        unique_together = ('category', 'attribute')
 
 
 class CategoryImage(ImageBaseModel):

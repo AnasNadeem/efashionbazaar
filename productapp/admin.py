@@ -1,13 +1,15 @@
 from django.contrib import admin
 from productapp.models import (
+    Attribute,
     Banner,
-    Type,
-    TypeImage,
     Category,
     CategoryImage,
     Product,
-    ProductImage,
+    ProductAttributeMap,
     ProductDetail,
+    ProductImage,
+    Type,
+    TypeImage,
 )
 
 
@@ -16,6 +18,20 @@ class TimeBaseModelAdmin(admin.ModelAdmin):
     list_filter = ('is_active', 'created', 'updated')
     readonly_fields = ('created', 'updated')
     list_editable = ('is_active',)
+
+
+class AttributeAdmin(TimeBaseModelAdmin):
+    list_display = ('id', 'name', 'description',) + TimeBaseModelAdmin.list_display
+    list_display_links = ('id', 'name')
+    search_fields = ('name', 'description')
+    fieldsets = (
+        ('Product Attribute', {
+            'fields': ('name', 'description', 'is_active')
+        }),
+        ('Time', {
+            'fields': ('created', 'updated')
+        }),
+    )
 
 
 class BannerAdmin(TimeBaseModelAdmin):
@@ -120,21 +136,42 @@ class ProductDetailInline(admin.TabularInline):
     extra = 0
 
 
+class ProductAttributeMapInline(admin.TabularInline):
+    model = ProductAttributeMap
+    extra = 1
+    fk_name = 'product'
+
+
 class ProductAdmin(TimeBaseModelAdmin):
-    list_display = ('id', 'category', 'name', 'slug', 'description', 'price',) + TimeBaseModelAdmin.list_display
+    list_display = ('id', 'category', 'name', 'slug', 'price',) + TimeBaseModelAdmin.list_display
     list_display_links = ('id', 'name')
-    readonly_fields = ('slug',) + TimeBaseModelAdmin.readonly_fields
-    list_filter = ('category',) + TimeBaseModelAdmin.list_filter
-    search_fields = ('category__name', 'name', 'description', 'price')
+    readonly_fields = ('slug', 'sku',) + TimeBaseModelAdmin.readonly_fields
+    list_filter = ('category', 'out_of_stock',) + TimeBaseModelAdmin.list_filter
+    search_fields = ('category__name', 'name', 'description', 'price', 'slug', 'sku')
     fieldsets = (
         ('Product', {
-            'fields': ('category', 'name', 'slug', 'description', 'price', 'is_active')
+            'fields': ('category', 'name', 'quantity', 'price', 'slug', 'sku', 'description', 'is_active', 'out_of_stock')
         }),
         ('Time', {
             'fields': ('created', 'updated')
         }),
     )
-    inlines = (ProductImageInline, ProductDetailInline,)
+    inlines = (ProductImageInline, ProductDetailInline, ProductAttributeMapInline,)
+
+
+class ProductAttributeMapAdmin(TimeBaseModelAdmin):
+    list_display = ('id', 'product', 'attribute', 'value', 'stock',) + TimeBaseModelAdmin.list_display
+    list_display_links = ('id', 'product')
+    list_filter = ('attribute',) + TimeBaseModelAdmin.list_filter
+    search_fields = ('product__name', 'attribute__name', 'value', 'stock',)
+    fieldsets = (
+        ('Product Attribute Map', {
+            'fields': ('product', 'attribute', 'value', 'stock')
+        }),
+        ('Time', {
+            'fields': ('created', 'updated')
+        }),
+    )
 
 
 class ProductImageAdmin(TimeBaseModelAdmin):
@@ -167,11 +204,13 @@ class ProductDetailAdmin(TimeBaseModelAdmin):
     )
 
 
+admin.site.register(Attribute, AttributeAdmin)
 admin.site.register(Banner, BannerAdmin)
-admin.site.register(Type, TypeAdmin)
-admin.site.register(TypeImage, TypeImageAdmin)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(CategoryImage, CategoryImageAdmin)
 admin.site.register(Product, ProductAdmin)
+admin.site.register(ProductAttributeMap, ProductAttributeMapAdmin)
 admin.site.register(ProductImage, ProductImageAdmin)
 admin.site.register(ProductDetail, ProductDetailAdmin)
+admin.site.register(Type, TypeAdmin)
+admin.site.register(TypeImage, TypeImageAdmin)

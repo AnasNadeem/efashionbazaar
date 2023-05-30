@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     # Our apps
     'productapp',
     'marketingapp',
+    'customerapp',
 ]
 
 MIDDLEWARE = [

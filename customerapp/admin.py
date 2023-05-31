@@ -28,6 +28,8 @@ class UserCartInline(admin.TabularInline):
     model = UserCart
     extra = 0
     fk_name = 'user'
+    readonly_fields = ('total_amount',)
+    fields = ('user', 'product', 'quantity', 'total_amount', 'is_active')
 
 
 class UserWishlistInline(admin.TabularInline):
@@ -51,7 +53,7 @@ class UserAdmin(admin.ModelAdmin):
     list_filter = ('is_staff', 'is_active', 'date_joined',)
     search_fields = ('email', 'first_name', 'last_name', 'phone',)
     ordering = ('email',)
-    inlines = (UserOTPInline, UserAddressInline, UserWishlistInline, UserOrderInline,)
+    inlines = (UserOTPInline, UserAddressInline, UserWishlistInline, UserCartInline, UserOrderInline,)
 
 
 class UserOTPAdmin(TimeBaseModelAdmin):
@@ -130,7 +132,7 @@ class UserOrderItemInline(admin.TabularInline):
     model = UserOrderItem
     extra = 0
     fk_name = 'userorder'
-    readonly_fields = ('total_amount',) + TimeBaseModelAdmin.readonly_fields
+    readonly_fields = ('total_amount',)
     fields = ('product', 'productattributemap', 'quantity', 'total_amount', 'is_active')
 
 

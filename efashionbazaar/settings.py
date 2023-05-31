@@ -36,9 +36,12 @@ INSTALLED_APPS = [
     'corsheaders',
     'django_filters',
     # Our apps
+    'customerapp',
     'productapp',
     'marketingapp',
 ]
+
+AUTH_USER_MODEL = 'customerapp.User'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

@@ -8,7 +8,7 @@ from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
-# from utils.models_base import TimeBaseModel
+from utils.models_base import TimeBaseModel
 
 
 class UserManager(BaseUserManager):
@@ -86,3 +86,17 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def email_user(self, subject, message, from_email=None, **kwargs):
         send_mail(subject, message, from_email, [self.email], **kwargs)
+
+
+class UserOTP(TimeBaseModel):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    otp = models.CharField(max_length=6)
+    is_verified = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f'{self.user.email} - {self.is_verified}'
+
+    class Meta:
+        verbose_name = 'User OTP'
+        verbose_name_plural = 'User OTPs'
+        ordering = ['user']

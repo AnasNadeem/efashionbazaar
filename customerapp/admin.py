@@ -112,12 +112,13 @@ class UserWishlistAdmin(TimeBaseModelAdmin):
 
 
 class UserCartAdmin(TimeBaseModelAdmin):
-    list_display = ('user', 'product', 'quantity',) + TimeBaseModelAdmin.list_display
+    list_display = ('user', 'product', 'quantity', 'total_amount') + TimeBaseModelAdmin.list_display
     search_fields = ('user', 'user__email', 'product__name', 'product__slug')
     ordering = ('user',)
+    readonly_fields = ('total_amount',) + TimeBaseModelAdmin.readonly_fields
     fieldsets = (
         ('User Cart', {
-            'fields': ('user', 'product', 'quantity', 'is_active')
+            'fields': ('user', 'product', 'quantity', 'total_amount', 'is_active')
         }),
         ('Time', {
             'fields': ('created', 'updated')
@@ -129,6 +130,7 @@ class UserOrderItemInline(admin.TabularInline):
     model = UserOrderItem
     extra = 0
     fk_name = 'userorder'
+    readonly_fields = ('total_amount',) + TimeBaseModelAdmin.readonly_fields
     fields = ('product', 'productattributemap', 'quantity', 'total_amount', 'is_active')
 
 
@@ -155,9 +157,10 @@ class UserOrderItemAdmin(TimeBaseModelAdmin):
     list_display = ('userorder', 'product', 'productattributemap', 'quantity', 'total_amount',) + TimeBaseModelAdmin.list_display
     search_fields = ('userorder', 'product', 'productattributemap', 'product__name', 'product__slug', 'productattributemap__attribute__name',)
     ordering = ('userorder',)
+    readonly_fields = ('total_amount',) + TimeBaseModelAdmin.readonly_fields
     fieldsets = (
         ('User Order Item', {
-            'fields': ('userorder', 'product', 'productattributemap', 'quantity', 'is_active')
+            'fields': ('userorder', 'product', 'productattributemap', 'quantity', 'total_amount', 'is_active')
         }),
         ('Time', {
             'fields': ('created', 'updated')

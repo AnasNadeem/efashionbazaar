@@ -130,6 +130,7 @@ class ProductAttributeMap(TimeBaseModel):
     attribute = models.ForeignKey(Attribute, on_delete=models.CASCADE)
     value = models.CharField(max_length=150)
     stock = models.IntegerField(default=0)
+    is_default = models.BooleanField(default=False)
 
     def __str__(self):
         return self.attribute.name + ' - ' + self.value

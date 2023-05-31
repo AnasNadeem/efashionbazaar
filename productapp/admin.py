@@ -188,13 +188,13 @@ class ProductAdmin(TimeBaseModelAdmin):
 
 
 class ProductAttributeMapAdmin(TimeBaseModelAdmin):
-    list_display = ('id', 'product', 'attribute', 'value', 'stock',) + TimeBaseModelAdmin.list_display
+    list_display = ('id', 'product', 'attribute', 'value', 'stock', 'is_default',) + TimeBaseModelAdmin.list_display
     list_display_links = ('id', 'product')
-    list_filter = ('attribute',) + TimeBaseModelAdmin.list_filter
+    list_filter = ('attribute', 'is_default',) + TimeBaseModelAdmin.list_filter
     search_fields = ('product__name', 'attribute__name', 'value', 'stock',)
     fieldsets = (
         ('Product Attribute Map', {
-            'fields': ('product', 'attribute', 'value', 'stock')
+            'fields': ('product', 'attribute', 'value', 'stock', 'is_default')
         }),
         ('Time', {
             'fields': ('created', 'updated')

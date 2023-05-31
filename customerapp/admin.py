@@ -18,6 +18,18 @@ class TimeBaseModelAdmin(admin.ModelAdmin):
     list_editable = ('is_active',)
 
 
+class UserOrderInline(admin.TabularInline):
+    model = UserOrder
+    extra = 0
+    fk_name = 'user'
+
+
+class UserCartInline(admin.TabularInline):
+    model = UserCart
+    extra = 0
+    fk_name = 'user'
+
+
 class UserWishlistInline(admin.TabularInline):
     model = UserWishlist
     extra = 0
@@ -39,7 +51,7 @@ class UserAdmin(admin.ModelAdmin):
     list_filter = ('is_staff', 'is_active', 'date_joined',)
     search_fields = ('email', 'first_name', 'last_name', 'phone',)
     ordering = ('email',)
-    inlines = (UserOTPInline, UserAddressInline, UserWishlistInline,)
+    inlines = (UserOTPInline, UserAddressInline, UserWishlistInline, UserOrderInline,)
 
 
 class UserOTPAdmin(TimeBaseModelAdmin):
@@ -63,7 +75,21 @@ class UserAddressAdmin(TimeBaseModelAdmin):
     ordering = ('user',)
     fieldsets = (
         ('User Address', {
-            'fields': ('user', 'address', 'city', 'state', 'pincode', 'phone_number', 'is_default')
+            'fields': ('user', 'address', 'city', 'state', 'pincode', 'phone_number', 'is_default', 'is_active')
+        }),
+        ('Time', {
+            'fields': ('created', 'updated')
+        }),
+    )
+
+
+class UserReviewAdmin(TimeBaseModelAdmin):
+    list_display = ('user', 'product', 'rating',) + TimeBaseModelAdmin.list_display
+    search_fields = ('user', 'user__email', 'product__name', 'product__slug')
+    ordering = ('user',)
+    fieldsets = (
+        ('User Review', {
+            'fields': ('user', 'product', 'rating', 'comment', 'is_active')
         }),
         ('Time', {
             'fields': ('created', 'updated')
@@ -73,11 +99,65 @@ class UserAddressAdmin(TimeBaseModelAdmin):
 
 class UserWishlistAdmin(TimeBaseModelAdmin):
     list_display = ('user', 'product',) + TimeBaseModelAdmin.list_display
-    search_fields = ('user__email', 'product__name', 'product__slug')
+    search_fields = ('user', 'user__email', 'product__name', 'product__slug')
     ordering = ('user',)
     fieldsets = (
         ('User Wishlist', {
-            'fields': ('user', 'product')
+            'fields': ('user', 'product', 'is_active')
+        }),
+        ('Time', {
+            'fields': ('created', 'updated')
+        }),
+    )
+
+
+class UserCartAdmin(TimeBaseModelAdmin):
+    list_display = ('user', 'product', 'quantity',) + TimeBaseModelAdmin.list_display
+    search_fields = ('user', 'user__email', 'product__name', 'product__slug')
+    ordering = ('user',)
+    fieldsets = (
+        ('User Cart', {
+            'fields': ('user', 'product', 'quantity', 'is_active')
+        }),
+        ('Time', {
+            'fields': ('created', 'updated')
+        }),
+    )
+
+
+class UserOrderItemInline(admin.TabularInline):
+    model = UserOrderItem
+    extra = 0
+    fk_name = 'userorder'
+    fields = ('product', 'productattributemap', 'quantity', 'total_amount', 'is_active')
+
+
+class UserOrderAdmin(TimeBaseModelAdmin):
+    list_display = ('user', 'total_amount', 'is_paid', 'is_delivered', 'is_cancelled',) + TimeBaseModelAdmin.list_display
+    list_filter = ('is_paid', 'is_delivered', 'is_cancelled',) + TimeBaseModelAdmin.list_filter
+    search_fields = ('user', 'user__email', 'address__address', 'address__city', 'address__state', 'address__pincode')
+    ordering = ('user',)
+    fieldsets = (
+        ('User Order', {
+            'fields': ('user', 'address', 'total_amount')
+        }),
+        ('Order Status', {
+            'fields': ('is_paid', 'is_delivered', 'is_cancelled', 'is_active')
+        }),
+        ('Time', {
+            'fields': ('created', 'updated')
+        }),
+    )
+    inlines = (UserOrderItemInline,)
+
+
+class UserOrderItemAdmin(TimeBaseModelAdmin):
+    list_display = ('userorder', 'product', 'productattributemap', 'quantity', 'total_amount',) + TimeBaseModelAdmin.list_display
+    search_fields = ('userorder', 'product', 'productattributemap', 'product__name', 'product__slug', 'productattributemap__attribute__name',)
+    ordering = ('userorder',)
+    fieldsets = (
+        ('User Order Item', {
+            'fields': ('userorder', 'product', 'productattributemap', 'quantity', 'is_active')
         }),
         ('Time', {
             'fields': ('created', 'updated')
@@ -88,4 +168,8 @@ class UserWishlistAdmin(TimeBaseModelAdmin):
 admin.site.register(User, UserAdmin)
 admin.site.register(UserOTP, UserOTPAdmin)
 admin.site.register(UserAddress, UserAddressAdmin)
+admin.site.register(UserReview, UserReviewAdmin)
 admin.site.register(UserWishlist, UserWishlistAdmin)
+admin.site.register(UserCart, UserCartAdmin)
+admin.site.register(UserOrder, UserOrderAdmin)
+admin.site.register(UserOrderItem, UserOrderItemAdmin)

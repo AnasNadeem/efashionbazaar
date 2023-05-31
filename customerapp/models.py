@@ -9,7 +9,7 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from utils.models_base import TimeBaseModel
-from productapp.models import Product
+from productapp.models import Product, ProductAttributeMap
 
 
 class UserManager(BaseUserManager):
@@ -121,6 +121,21 @@ class UserAddress(TimeBaseModel):
         ordering = ['user']
 
 
+class UserReview(TimeBaseModel):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    rating = models.PositiveIntegerField(default=1)
+    comment = models.TextField(blank=True)
+
+    def __str__(self):
+        return f'{self.user.email} - {self.product.name}'
+
+    class Meta:
+        verbose_name = 'User Review'
+        verbose_name_plural = 'User Reviews'
+        ordering = ['user']
+
+
 class UserWishlist(TimeBaseModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
@@ -148,12 +163,18 @@ class UserCart(TimeBaseModel):
         verbose_name_plural = 'User Carts'
         ordering = ['user']
 
+    @property
+    def total_amount(self):
+        return self.quantity * self.product.price
+
 
 class UserOrder(TimeBaseModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     address = models.ForeignKey(UserAddress, on_delete=models.CASCADE)
     total_amount = models.FloatField()
     is_delivered = models.BooleanField(default=False)
+    is_cancelled = models.BooleanField(default=False)
+    is_paid = models.BooleanField(default=False)
 
     def __str__(self):
         return f'{self.user.email} - {self.address}'
@@ -168,6 +189,7 @@ class UserOrderItem(TimeBaseModel):
     userorder = models.ForeignKey(UserOrder, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
+    productattributemap = models.ForeignKey(ProductAttributeMap, on_delete=models.CASCADE)
 
     def __str__(self):
         return f'{self.userorder.user.email} - {self.product.name}'
@@ -177,17 +199,6 @@ class UserOrderItem(TimeBaseModel):
         verbose_name_plural = 'User Order Items'
         ordering = ['userorder']
 
-
-class UserReview(TimeBaseModel):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    rating = models.PositiveIntegerField(default=1)
-    comment = models.TextField(blank=True)
-
-    def __str__(self):
-        return f'{self.user.email} - {self.product.name}'
-
-    class Meta:
-        verbose_name = 'User Review'
-        verbose_name_plural = 'User Reviews'
-        ordering = ['user']
+    @property
+    def total_amount(self):
+        return self.quantity * self.product.price

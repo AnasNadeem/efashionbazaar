@@ -9,6 +9,7 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from utils.models_base import TimeBaseModel
+from productapp.models import Product
 
 
 class UserManager(BaseUserManager):
@@ -99,4 +100,94 @@ class UserOTP(TimeBaseModel):
     class Meta:
         verbose_name = 'User OTP'
         verbose_name_plural = 'User OTPs'
+        ordering = ['user']
+
+
+class UserAddress(TimeBaseModel):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    address = models.CharField(max_length=200)
+    city = models.CharField(max_length=50)
+    state = models.CharField(max_length=50)
+    pincode = models.CharField(max_length=6)
+    phone_number = models.CharField(max_length=15, blank=True)
+    is_default = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f'{self.user.email} - {self.address}'
+
+    class Meta:
+        verbose_name = 'User Address'
+        verbose_name_plural = 'User Addresses'
+        ordering = ['user']
+
+
+class UserWishlist(TimeBaseModel):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.user.email} - {self.product.name}'
+
+    class Meta:
+        verbose_name = 'User Wishlist'
+        verbose_name_plural = 'User Wishlists'
+        ordering = ['user']
+        unique_together = ('user', 'product')
+
+
+class UserCart(TimeBaseModel):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
+
+    def __str__(self):
+        return f'{self.user.email} - {self.product.name}'
+
+    class Meta:
+        verbose_name = 'User Cart'
+        verbose_name_plural = 'User Carts'
+        ordering = ['user']
+
+
+class UserOrder(TimeBaseModel):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    address = models.ForeignKey(UserAddress, on_delete=models.CASCADE)
+    total_amount = models.FloatField()
+    is_delivered = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f'{self.user.email} - {self.address}'
+
+    class Meta:
+        verbose_name = 'User Order'
+        verbose_name_plural = 'User Orders'
+        ordering = ['user']
+
+
+class UserOrderItem(TimeBaseModel):
+    userorder = models.ForeignKey(UserOrder, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
+
+    def __str__(self):
+        return f'{self.userorder.user.email} - {self.product.name}'
+
+    class Meta:
+        verbose_name = 'User Order Item'
+        verbose_name_plural = 'User Order Items'
+        ordering = ['userorder']
+
+
+class UserReview(TimeBaseModel):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    rating = models.PositiveIntegerField(default=1)
+    comment = models.TextField(blank=True)
+
+    def __str__(self):
+        return f'{self.user.email} - {self.product.name}'
+
+    class Meta:
+        verbose_name = 'User Review'
+        verbose_name_plural = 'User Reviews'
         ordering = ['user']

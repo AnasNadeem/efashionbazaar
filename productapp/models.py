@@ -175,7 +175,7 @@ class ProductDetail(TimeBaseModel):
 class ProductEcommercePlatform(TimeBaseModel):
     """ For example: Amazon, Flipkart, etc """
     PLATFORM = (
-        ('ajio', 'Ajio')
+        ('ajio', 'Ajio'),
         ('amazon', 'Amazon'),
         ('flipkart', 'Flipkart'),
         ('meesho', 'Meesho'),

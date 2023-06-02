@@ -59,7 +59,6 @@ class UserAdmin(admin.ModelAdmin):
 class UserOTPAdmin(TimeBaseModelAdmin):
     list_display = ('user', 'otp', 'is_verified',) + TimeBaseModelAdmin.list_display
     search_fields = ('user__email', 'user__first_name', 'user__last_name', 'user__phone',)
-    ordering = ('user',)
     fieldsets = (
         ('User OTP', {
             'fields': ('user', 'otp', 'is_verified')
@@ -74,7 +73,6 @@ class UserAddressAdmin(TimeBaseModelAdmin):
     list_display = ('user', 'city', 'state', 'pincode', 'is_default',) + TimeBaseModelAdmin.list_display
     list_filter = ('is_default',) + TimeBaseModelAdmin.list_filter
     search_fields = ('user__email', 'user__first_name', 'user__last_name', 'user__phone', 'city', 'state', 'pincode',)
-    ordering = ('user',)
     fieldsets = (
         ('User Address', {
             'fields': ('user', 'address', 'city', 'state', 'pincode', 'phone_number', 'is_default', 'is_active')
@@ -88,7 +86,6 @@ class UserAddressAdmin(TimeBaseModelAdmin):
 class UserReviewAdmin(TimeBaseModelAdmin):
     list_display = ('user', 'product', 'rating',) + TimeBaseModelAdmin.list_display
     search_fields = ('user__email', 'user__first_name', 'user__last_name', 'user__phone', 'product__name', 'product__slug')
-    ordering = ('user',)
     fieldsets = (
         ('User Review', {
             'fields': ('user', 'product', 'rating', 'comment', 'is_active')
@@ -102,7 +99,6 @@ class UserReviewAdmin(TimeBaseModelAdmin):
 class UserWishlistAdmin(TimeBaseModelAdmin):
     list_display = ('user', 'product',) + TimeBaseModelAdmin.list_display
     search_fields = ('user__email', 'user__first_name', 'user__last_name', 'user__phone', 'product__name', 'product__slug')
-    ordering = ('user',)
     fieldsets = (
         ('User Wishlist', {
             'fields': ('user', 'product', 'is_active')
@@ -116,7 +112,6 @@ class UserWishlistAdmin(TimeBaseModelAdmin):
 class UserCartAdmin(TimeBaseModelAdmin):
     list_display = ('user', 'product', 'quantity', 'total_amount') + TimeBaseModelAdmin.list_display
     search_fields = ('user__email', 'user__first_name', 'user__last_name', 'user__phone', 'product__name', 'product__slug')
-    ordering = ('user',)
     readonly_fields = ('total_amount',) + TimeBaseModelAdmin.readonly_fields
     fieldsets = (
         ('User Cart', {
@@ -140,7 +135,6 @@ class UserOrderAdmin(TimeBaseModelAdmin):
     list_display = ('user', 'total_amount', 'is_paid', 'is_delivered', 'is_cancelled',) + TimeBaseModelAdmin.list_display
     list_filter = ('is_paid', 'is_delivered', 'is_cancelled',) + TimeBaseModelAdmin.list_filter
     search_fields = ('user__email', 'user__first_name', 'user__last_name', 'user__phone', 'address__address', 'address__city', 'address__state', 'address__pincode')
-    ordering = ('user',)
     fieldsets = (
         ('User Order', {
             'fields': ('user', 'address', 'total_amount')
@@ -158,7 +152,6 @@ class UserOrderAdmin(TimeBaseModelAdmin):
 class UserOrderItemAdmin(TimeBaseModelAdmin):
     list_display = ('userorder', 'product', 'productattributemap', 'quantity', 'total_amount',) + TimeBaseModelAdmin.list_display
     search_fields = ('userorder__user__email', 'user__first_name', 'user__last_name', 'userorder__user__phone', 'productattributemap__attribute__name', 'productattributemap__value', 'product__name', 'product__slug',)
-    ordering = ('userorder',)
     readonly_fields = ('total_amount',) + TimeBaseModelAdmin.readonly_fields
     fieldsets = (
         ('User Order Item', {

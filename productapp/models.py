@@ -107,18 +107,17 @@ class Product(TimeBaseModel):
     out_of_stock = models.BooleanField(default=False)
     # attr_value = models.ManyToManyField(AttributeValue, blank=True)
 
+    class Meta:
+        verbose_name = 'Product'
+        verbose_name_plural = 'Products'
+        unique_together = ('category', 'name')
+
     @property
     def generate_sku(self):
         return self.category.slug + '-' + self.slug
 
     def __str__(self):
         return self.name + ' - ' + self.category.name
-
-    class Meta:
-        verbose_name = 'Product'
-        verbose_name_plural = 'Products'
-        ordering = ['-created', 'id']
-        unique_together = ('category', 'name')
 
 
 class ProductAttributeMap(TimeBaseModel):
@@ -129,6 +128,11 @@ class ProductAttributeMap(TimeBaseModel):
     stock = models.IntegerField(default=0)
     is_default = models.BooleanField(default=False)
 
+    class Meta:
+        verbose_name = 'Product Attribute Map'
+        verbose_name_plural = 'Product Attribute Maps'
+        unique_together = ('attribute', 'value')
+
     def __str__(self):
         return self.attribute.name + ' - ' + self.value
 
@@ -137,26 +141,19 @@ class ProductAttributeMap(TimeBaseModel):
             raise ValidationError('Stock cannot be greater than product quantity')
         super().clean()
 
-    class Meta:
-        verbose_name = 'Product Attribute Map'
-        verbose_name_plural = 'Product Attribute Maps'
-        ordering = ['attribute', 'value']
-        unique_together = ('attribute', 'value')
-
 
 class ProductImage(ImageBaseModel):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = 'Product Image'
+        verbose_name_plural = 'Product Images'
 
     def __str__(self):
         return self.product.name
 
     def clean(self):
         super().clean()
-
-    class Meta:
-        verbose_name = 'Product Image'
-        verbose_name_plural = 'Product Images'
-        ordering = ['product']
 
 
 class ProductDetail(TimeBaseModel):
@@ -165,14 +162,14 @@ class ProductDetail(TimeBaseModel):
     name = models.CharField(max_length=150)
     description = models.TextField()
 
-    def __str__(self):
-        return self.product.name + ' - ' + self.name
-
     class Meta:
         verbose_name = 'Product Detail'
         verbose_name_plural = 'Product Details'
         ordering = ['product', 'name']
         unique_together = ('product', 'name')
+
+    def __str__(self):
+        return self.product.name + ' - ' + self.name
 
 
 class ProductEcommercePlatform(TimeBaseModel):
@@ -191,14 +188,13 @@ class ProductEcommercePlatform(TimeBaseModel):
     url = models.URLField()
     is_default = models.BooleanField(default=False)
 
-    def __str__(self):
-        return self.platform + ' - ' + self.product.name
-
     class Meta:
         verbose_name = 'Product Ecommerce Platform'
         verbose_name_plural = 'Product Ecommerce Platforms'
-        ordering = ['product', 'platform']
         unique_together = ('product', 'platform')
+
+    def __str__(self):
+        return self.platform + ' - ' + self.product.name
 
 
 class Banner(TimeBaseModel):
@@ -210,6 +206,10 @@ class Banner(TimeBaseModel):
     type_redirect = models.ForeignKey(Type, on_delete=models.CASCADE, blank=True, null=True)
     category_redirect = models.ForeignKey(Category, on_delete=models.CASCADE, blank=True, null=True)
     product_redirect = models.ForeignKey(Product, on_delete=models.CASCADE, blank=True, null=True)
+
+    class Meta:
+        verbose_name = 'Banner'
+        verbose_name_plural = 'Banners'
 
     def __str__(self):
         return self.name
@@ -225,8 +225,3 @@ class Banner(TimeBaseModel):
                 raise ValidationError('Please select a redirect option')
 
         super().clean()
-
-    class Meta:
-        verbose_name = 'Banner'
-        verbose_name_plural = 'Banners'
-        ordering = ['name']

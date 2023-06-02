@@ -11,13 +11,13 @@ class Attribute(TimeBaseModel):
     name = models.CharField(max_length=150, unique=True)
     description = models.TextField(blank=True, null=True)
 
-    def __str__(self):
-        return self.name
-
     class Meta:
         verbose_name = 'Attribute'
         verbose_name_plural = 'Attributes'
         ordering = ['name']
+
+    def __str__(self):
+        return self.name
 
 
 class Type(TimeBaseModel):
@@ -26,28 +26,27 @@ class Type(TimeBaseModel):
     slug = AutoSlugField(populate_from='name', unique=True)
     description = models.TextField(blank=True, null=True)
 
-    def __str__(self):
-        return self.name
-
     class Meta:
         verbose_name = 'Type'
         verbose_name_plural = 'Types'
         ordering = ['name']
 
+    def __str__(self):
+        return self.name
+
 
 class TypeImage(ImageBaseModel):
     type = models.ForeignKey(Type, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = 'Type Image'
+        verbose_name_plural = 'Type Images'
 
     def __str__(self):
         return self.type.name
 
     def clean(self):
         super().clean()
-
-    class Meta:
-        verbose_name = 'Type Image'
-        verbose_name_plural = 'Type Images'
-        ordering = ['type']
 
 
 class Category(TimeBaseModel):
@@ -57,14 +56,13 @@ class Category(TimeBaseModel):
     slug = AutoSlugField(populate_from='name', unique=True)
     description = models.TextField(blank=True, null=True)
 
-    def __str__(self):
-        return self.name
-
     class Meta:
         verbose_name = 'Category'
         verbose_name_plural = 'Categories'
-        ordering = ['type', 'name']
         unique_together = ('type', 'name')
+
+    def __str__(self):
+        return self.name
 
 
 class CategoryAttributeMap(TimeBaseModel):
@@ -73,29 +71,28 @@ class CategoryAttributeMap(TimeBaseModel):
     attribute = models.ForeignKey(Attribute, on_delete=models.CASCADE)
     values = ArrayField(models.CharField(max_length=50), blank=True, null=True)
 
-    def __str__(self):
-        return self.category.name + ' - ' + self.attribute.name
-
     class Meta:
         verbose_name = 'Category Attribute Map'
         verbose_name_plural = 'Category Attribute Maps'
-        ordering = ['category', 'attribute']
         unique_together = ('category', 'attribute')
+
+    def __str__(self):
+        return self.category.name + ' - ' + self.attribute.name
 
 
 class CategoryImage(ImageBaseModel):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = 'Category Image'
+        verbose_name_plural = 'Category Images'
+        ordering = ['category']
 
     def __str__(self):
         return self.category.name
 
     def clean(self):
         super().clean()
-
-    class Meta:
-        verbose_name = 'Category Image'
-        verbose_name_plural = 'Category Images'
-        ordering = ['category']
 
 
 class Product(TimeBaseModel):
@@ -120,7 +117,7 @@ class Product(TimeBaseModel):
     class Meta:
         verbose_name = 'Product'
         verbose_name_plural = 'Products'
-        ordering = ['category', 'name']
+        ordering = ['-created', 'id']
         unique_together = ('category', 'name')
 
 
@@ -181,12 +178,18 @@ class ProductDetail(TimeBaseModel):
 class ProductEcommercePlatform(TimeBaseModel):
     """ For example: Amazon, Flipkart, etc """
     PLATFORM = (
+        ('ajio', 'Ajio')
         ('amazon', 'Amazon'),
-        ('flipkart', 'Flipkart')
+        ('flipkart', 'Flipkart'),
+        ('meesho', 'Meesho'),
+        ('myntra', 'Myntra'),
+        ('nykaa', 'Nykaa'),
+        ('tatacliq', 'Tata Cliq'),
     )
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     platform = models.CharField(max_length=50, choices=PLATFORM)
     url = models.URLField()
+    is_default = models.BooleanField(default=False)
 
     def __str__(self):
         return self.platform + ' - ' + self.product.name

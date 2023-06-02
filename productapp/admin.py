@@ -203,13 +203,13 @@ class ProductAttributeMapAdmin(TimeBaseModelAdmin):
 
 
 class ProductEcommercePlatformAdmin(TimeBaseModelAdmin):
-    list_display = ('id', 'product', 'platform',) + TimeBaseModelAdmin.list_display
+    list_display = ('id', 'product', 'platform', 'is_default',) + TimeBaseModelAdmin.list_display
     list_display_links = ('id', 'product')
-    list_filter = ('platform',) + TimeBaseModelAdmin.list_filter
-    search_fields = ('product__name', 'platform__name', 'url')
+    list_filter = ('platform', 'is_default',) + TimeBaseModelAdmin.list_filter
+    search_fields = ('product__name', 'product__slug', 'platform__name', 'url')
     fieldsets = (
         ('Product Ecommerce Platform', {
-            'fields': ('product', 'platform', 'url', 'is_active')
+            'fields': ('product', 'platform', 'url', 'is_default', 'is_active')
         }),
         ('Time', {
             'fields': ('created', 'updated')
@@ -222,7 +222,7 @@ class ProductImageAdmin(TimeBaseModelAdmin):
     list_display_links = ('id', 'product')
     list_editable = ('is_default',) + TimeBaseModelAdmin.list_editable
     list_filter = ('is_default',) + TimeBaseModelAdmin.list_filter
-    search_fields = ('product__name', 'image_type')
+    search_fields = ('product__name', 'product__slug', 'image_type')
     fieldsets = (
         ('Product Image', {
             'fields': ('product', 'image_type', 'image', 'is_default')
@@ -236,7 +236,7 @@ class ProductImageAdmin(TimeBaseModelAdmin):
 class ProductDetailAdmin(TimeBaseModelAdmin):
     list_display = ('id', 'product', 'name', 'description',) + TimeBaseModelAdmin.list_display
     list_display_links = ('id', 'name')
-    search_fields = ('product__name', 'name', 'description')
+    search_fields = ('product__name', 'product__slug', 'name', 'description')
     fieldsets = (
         ('Product Detail', {
             'fields': ('product', 'name', 'description', 'is_active')

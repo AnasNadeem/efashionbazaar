@@ -9,6 +9,7 @@ class TimeBaseModel(models.Model):
 
     class Meta:
         abstract = True
+        ordering = ['-created']
 
 
 class ImageBaseModel(TimeBaseModel):

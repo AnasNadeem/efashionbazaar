@@ -94,13 +94,12 @@ class UserOTP(TimeBaseModel):
     otp = models.CharField(max_length=6)
     is_verified = models.BooleanField(default=False)
 
-    def __str__(self):
-        return f'{self.user.email} - {self.is_verified}'
-
     class Meta:
         verbose_name = 'User OTP'
         verbose_name_plural = 'User OTPs'
-        ordering = ['user']
+
+    def __str__(self):
+        return f'{self.user.email} - {self.is_verified}'
 
 
 class UserAddress(TimeBaseModel):
@@ -112,13 +111,12 @@ class UserAddress(TimeBaseModel):
     phone_number = models.CharField(max_length=15, blank=True)
     is_default = models.BooleanField(default=False)
 
-    def __str__(self):
-        return f'{self.user.email} - {self.address}'
-
     class Meta:
         verbose_name = 'User Address'
         verbose_name_plural = 'User Addresses'
-        ordering = ['user']
+
+    def __str__(self):
+        return f'{self.user.email} - {self.address}'
 
 
 class UserReview(TimeBaseModel):
@@ -127,21 +125,18 @@ class UserReview(TimeBaseModel):
     rating = models.PositiveIntegerField(default=1)
     comment = models.TextField(blank=True)
 
-    def __str__(self):
-        return f'{self.user.email} - {self.product.name}'
-
     class Meta:
         verbose_name = 'User Review'
         verbose_name_plural = 'User Reviews'
         ordering = ['user']
 
+    def __str__(self):
+        return f'{self.user.email} - {self.product.name}'
+
 
 class UserWishlist(TimeBaseModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return f'{self.user.email} - {self.product.name}'
 
     class Meta:
         verbose_name = 'User Wishlist'
@@ -149,19 +144,22 @@ class UserWishlist(TimeBaseModel):
         ordering = ['user']
         unique_together = ('user', 'product')
 
+    def __str__(self):
+        return f'{self.user.email} - {self.product.name}'
+
 
 class UserCart(TimeBaseModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
 
-    def __str__(self):
-        return f'{self.user.email} - {self.product.name}'
-
     class Meta:
         verbose_name = 'User Cart'
         verbose_name_plural = 'User Carts'
         ordering = ['user']
+
+    def __str__(self):
+        return f'{self.user.email} - {self.product.name}'
 
     @property
     def total_amount(self):
@@ -176,13 +174,12 @@ class UserOrder(TimeBaseModel):
     is_cancelled = models.BooleanField(default=False)
     is_paid = models.BooleanField(default=False)
 
-    def __str__(self):
-        return f'{self.user.email} - {self.address}'
-
     class Meta:
         verbose_name = 'User Order'
         verbose_name_plural = 'User Orders'
-        ordering = ['user']
+
+    def __str__(self):
+        return f'{self.user.email} - {self.address}'
 
 
 class UserOrderItem(TimeBaseModel):
@@ -191,13 +188,12 @@ class UserOrderItem(TimeBaseModel):
     quantity = models.PositiveIntegerField(default=1)
     productattributemap = models.ForeignKey(ProductAttributeMap, on_delete=models.CASCADE)
 
-    def __str__(self):
-        return f'{self.userorder.user.email} - {self.product.name}'
-
     class Meta:
         verbose_name = 'User Order Item'
         verbose_name_plural = 'User Order Items'
-        ordering = ['userorder']
+
+    def __str__(self):
+        return f'{self.userorder.user.email} - {self.product.name}'
 
     @property
     def total_amount(self):

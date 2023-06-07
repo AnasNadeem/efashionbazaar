@@ -65,7 +65,7 @@ class FAQ(TimeBaseModel):
     def __str__(self):
         return self.question
 
-    
+
 class Newsletter(TimeBaseModel):
     email = models.EmailField(max_length=100)
     phone_number = models.CharField(max_length=15, blank=True)
@@ -76,7 +76,7 @@ class Newsletter(TimeBaseModel):
 
     def __str__(self):
         return f'{self.email} - {self.phone_number}'
-    
+
 
 class PrivacyPolicy(TimeBaseModel):
     title = models.CharField(max_length=200)

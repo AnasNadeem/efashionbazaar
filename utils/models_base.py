@@ -33,8 +33,8 @@ class ImageBaseModel(TimeBaseModel):
         if self.image.size > 1024 * 1024:
             raise ValidationError('Image size must be less than 1MB')
 
-        if self.image.name.split('.')[-1] != 'png':
-            raise ValidationError('Image must be PNG')
+        # if self.image.name.split('.')[-1] != 'png':
+        #     raise ValidationError('Image must be PNG')
 
         if self.is_default:
             default_image = self.__class__.objects.filter(is_default=True)

@@ -21,37 +21,17 @@ class AttributeSerializer(ModelSerializer):
         fields = '__all__'
 
 
-class TypeSerializer(ModelSerializer):
-    class Meta:
-        model = Type
-        fields = '__all__'
-
-
 class TypeImageSerializer(ModelSerializer):
     class Meta:
         model = TypeImage
         fields = '__all__'
 
 
-class TypeImageInDepthSerializer(ModelSerializer):
-    type = TypeSerializer()
+class TypeSerializer(ModelSerializer):
+    images = TypeImageSerializer(many=True, source='typeimage_set')
 
     class Meta:
-        model = TypeImage
-        fields = '__all__'
-
-
-class CategorySerializer(ModelSerializer):
-    class Meta:
-        model = Category
-        fields = '__all__'
-
-
-class CategoryInDepthSerializer(ModelSerializer):
-    type = TypeSerializer()
-
-    class Meta:
-        model = Category
+        model = Type
         fields = '__all__'
 
 
@@ -61,22 +41,7 @@ class CategoryImageSerializer(ModelSerializer):
         fields = '__all__'
 
 
-class CategoryImageInDepthSerializer(ModelSerializer):
-    category = CategorySerializer()
-
-    class Meta:
-        model = CategoryImage
-        fields = '__all__'
-
-
 class CategoryAttributeMapSerializer(ModelSerializer):
-    class Meta:
-        model = CategoryAttributeMap
-        fields = '__all__'
-
-
-class CategoryAttributeMapInDepthSerializer(ModelSerializer):
-    category = CategorySerializer()
     attribute = AttributeSerializer()
 
     class Meta:
@@ -84,29 +49,26 @@ class CategoryAttributeMapInDepthSerializer(ModelSerializer):
         fields = '__all__'
 
 
-class ProductSerializer(ModelSerializer):
+class CategorySerializer(ModelSerializer):
+    images = CategoryImageSerializer(many=True, source='categoryimage_set')
+    attributemaps = CategoryAttributeMapSerializer(many=True, source='categoryattributemap_set')
+
     class Meta:
-        model = Product
+        model = Category
         fields = '__all__'
 
 
-class ProductInDepthSerializer(ModelSerializer):
-    category = CategorySerializer()
+class CategoryInDepthSerializer(ModelSerializer):
+    type = TypeSerializer()
+    images = CategoryImageSerializer(many=True, source='categoryimage_set')
+    attributemaps = CategoryAttributeMapSerializer(many=True, source='categoryattributemap_set')
 
     class Meta:
-        model = Product
+        model = Category
         fields = '__all__'
 
 
 class ProductImageSerializer(ModelSerializer):
-    class Meta:
-        model = ProductImage
-        fields = '__all__'
-
-
-class ProductImageInDepthSerializer(ModelSerializer):
-    product = ProductSerializer()
-
     class Meta:
         model = ProductImage
         fields = '__all__'
@@ -118,24 +80,7 @@ class ProductAttributeMapSerializer(ModelSerializer):
         fields = '__all__'
 
 
-class ProductAttributeMapInDepthSerializer(ModelSerializer):
-    product = ProductSerializer()
-    attribute = AttributeSerializer()
-
-    class Meta:
-        model = ProductAttributeMap
-        fields = '__all__'
-
-
 class ProductDetailSerializer(ModelSerializer):
-    class Meta:
-        model = ProductDetail
-        fields = '__all__'
-
-
-class ProductDetailInDepthSerializer(ModelSerializer):
-    product = ProductSerializer()
-
     class Meta:
         model = ProductDetail
         fields = '__all__'
@@ -147,38 +92,27 @@ class ProductEcommercePlatformSerializer(ModelSerializer):
         fields = '__all__'
 
 
-class ProductEcommercePlatformInDepthSerializer(ModelSerializer):
-    product = ProductSerializer()
+class ProductSerializer(ModelSerializer):
+    images = ProductImageSerializer(many=True, source='productimage_set')
+    attributes = ProductAttributeMapSerializer(many=True, source='productattributemap_set')
+    details = ProductDetailSerializer(many=True, source='productdetail_set')
+    ecommerceplatforms = ProductEcommercePlatformSerializer(many=True, source='productecommerceplatform_set')
 
     class Meta:
-        model = ProductEcommercePlatform
+        model = Product
         fields = '__all__'
 
 
-class ProductFullInDepthSerializer(ModelSerializer):
+class ProductInDepthSerializer(ModelSerializer):
     category = CategorySerializer()
     images = ProductImageSerializer(many=True, source='productimage_set')
     attributes = ProductAttributeMapSerializer(many=True, source='productattributemap_set')
     details = ProductDetailSerializer(many=True, source='productdetail_set')
-    ecommerce_platforms = ProductEcommercePlatformSerializer(many=True, source='productecommerceplatform_set')
+    ecommerceplatforms = ProductEcommercePlatformSerializer(many=True, source='productecommerceplatform_set')
 
     class Meta:
         model = Product
-        fields = (
-            'id',
-            'name',
-            'slug',
-            'sku',
-            'price',
-            'quantity',
-            'category',
-            'description',
-            'out_of_stock',
-            'images',
-            'attributes',
-            'details',
-            'ecommerce_platforms',
-        )
+        fields = '__all__'
 
 
 class BannerSerializer(ModelSerializer):
